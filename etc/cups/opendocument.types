@@ -1,0 +1,11 @@
+application/vnd.oasis.opendocument.text		odt, doc, docx \
+						contains(0,128,"application/vnd.oasis.opendocument.text") \
+						contains(0,4096,"word/document.xml") priority(150)
+
+application/vnd.oasis.opendocument.presentation	odt, \
+						contains(0,128,"application/vnd.oasis.opendocument.presentation") priority(150)
+
+application/vnd.oasis.opendocument.spreadsheet	ods, xls, xlsx \
+						contains(0,128,"application/vnd.oasis.opendocument.spreadsheet") \
+						contains(0,20,"ÐÏ^Qà¡±^Z") priority(150)
+
