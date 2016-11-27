@@ -1,26 +1,26 @@
 #!/bin/sh
 
 # texttops - This is a Text-to-PostScript filter for CUPS
+# opendoctopdf - This is a Filter from opendocument-Format (Libreoffice, Openoffice...) to PDF for CUPS
 #
-# Note: This wrapper filter is only included for backward compatibility with
-# certan custom configurations. It is not mentioned in any of the .convs
-# files included in this package and therefore never used with the default
-# configuration. It makes sure that third-party PPD files referring to
-# texttops explicitly or custom configurations (in /etc/cups/*.convs files)
-# will not break.
+# Note: This wratpper is a filter which converts a file or a stream (cat document.odt|lpr) 
+# from Opendocument-Format to PDF, to use it as a general Filter in CUPS.
+# /etc/cups/opendocument.types and /etc/cups/opendocument.conv  use this filter
 #
-# DO NOT create new PPD or .convs files using this filter! texttops is
-# DEPRECATED!
-
-# (C) 2012 Till Kamppeter <till.kamppeter@gmail.com>
+# (C) 2016 Jakob Schürz <xundeenergie@gmail.com>
 #
 # Released under GPL 2 or later
 #
 
 UNOCONV=`which unoconv`
 
+
 echo "DEBUG: odttopdf argv[$#] = $@" >&2
 echo "DEBUG: PPD: $PPD" >&2
+
+convert () {
+	$UNOCONV --stdout "$1"
+}
 
 
 if [ $# -lt 5 -o $# -gt 6 ]; then
@@ -33,16 +33,6 @@ if [ -n "$6" ]; then
     exec <"$6"
 fi
 
-if [ -e "$6" ]; then
-	$UNOCONV --stdout "$6"
-else
-	TMP="$(mktemp -d)/$3"
-	echo "$6" > "$TMP"
-	$UNOCONV --stdout "$TMP"
-	rm $TMP
-fi
+$UNOCONV --stdout "$6"
 
-#$UNOCONV  --stdin --stdout <$6
-
-#$CUPS_SERVERBIN/filter/odttopdf "$1" "$2" "$3" "$4" "$5" | $UNOCONV --stdin --stdout
 #$CUPS_SERVERBIN/filter/texttopdf "$1" "$2" "$3" "$4" "$5" | $PDF2PS - -
