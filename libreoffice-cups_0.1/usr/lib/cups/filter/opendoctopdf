@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# texttops - This is a Text-to-PostScript filter for CUPS
+# opendoctopdf - This is a Filter from opendocument-Format (Libreoffice, Openoffice...) to PDF for CUPS
+#
+# Note: This wratpper is a filter which converts a file or a stream (cat document.odt|lpr) 
+# from Opendocument-Format to PDF, to use it as a general Filter in CUPS.
+# /etc/cups/opendocument.types and /etc/cups/opendocument.conv  use this filter
+#
+# (C) 2016 Jakob Schürz <xundeenergie@gmail.com>
+#
+# Released under GPL 2 or later
+#
+
+UNOCONV=`which unoconv`
+
+
+echo "DEBUG: odttopdf argv[$#] = $@" >&2
+echo "DEBUG: PPD: $PPD" >&2
+
+convert () {
+	$UNOCONV --stdout "$1"
+}
+
+
+if [ $# -lt 5 -o $# -gt 6 ]; then
+    echo "ERROR: $0 job-id user title copies options [file]" >&2
+    exit 1
+fi
+
+# Read from given file.
+if [ -n "$6" ]; then
+    exec <"$6"
+fi
+
+$UNOCONV --stdout "$6"
+
+#$CUPS_SERVERBIN/filter/texttopdf "$1" "$2" "$3" "$4" "$5" | $PDF2PS - -
