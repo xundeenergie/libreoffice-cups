@@ -1,11 +1,11 @@
 Package: libreoffice-cups
-Version: 0.1
+Version: 0.2
 Section: backup
 Priority: extra
 Architecture: all
 Maintainer: Jakobus Schürz <xundeenergie@gmail.com>
 Homepage: http://github.com/xundeenergie/libreoffice-cups
 Provides: libreoffice-cups
-Depends: cups, unoconv
+Depends: cups, unoconv, python, python-fuse
 Description: CUPS-Filter for Opendocument-Files 
  CUPS-Filter to print Writer, Calc and Presentation-Files from Libreoffice/Openoffice when feed then to lpr als Files or with cat on stdin.
