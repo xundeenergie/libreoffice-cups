@@ -1,8 +1,10 @@
 [Unit]
-Description=Starts mounting printers to %h/Desktop/printers, if this directory exists
+Description=Starts mounting printers to %h/Desktop/Drucker, if this directory exists
+Wants=set-environment.service
+After=set-environment.service
 
 [Path]
-PathExists=%h/Desktop/Drucker
+PathExists=%h/Drucker
 Unit=cups-fuse.service
 
 [Install]

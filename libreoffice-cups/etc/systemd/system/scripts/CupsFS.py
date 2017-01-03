@@ -11,6 +11,7 @@
 import stat
 import errno
 import fuse
+import re
 from time import time
 from subprocess import *
 
@@ -34,21 +35,32 @@ class CupsFS(fuse.Fuse):
         fuse.Fuse.__init__(self, *args, **kw)
 
         # Get our list of printers available.
-        lpstat = Popen(['LANG=C lpstat -p'], shell=True, stdout=PIPE)
-        output = lpstat.communicate()[0]
-        lines = output.split('\n');
-        lpstat.wait()
+#        lpstat = Popen(['LANG=C lpstat -p'], shell=True, stdout=PIPE)
+#        output = lpstat.communicate()[0]
+#        lines = output.split('\n');
+#        lpstat.wait()
 
         self.printers = {}
         self.files = {}
         self.lastfiles = {}
+
+#        ex = re.compile('^printer')
+#        for line in lines:
+#            if not ex.search(line): continue
+#            self.printers[line.split(' ')[1]] = []
+        self.readprinters()
+
+    def readprinters(self):
+        self.printers = {}
+        lpstat = Popen(['LANG=C lpstat -p'], shell=True, stdout=PIPE)
+        output = lpstat.communicate()[0]
+        lines = output.split('\n');
+        lpstat.wait()
+        ex = re.compile('^printer')
         for line in lines:
-            words = line.split(' ')
-            if len(words) > 2:
-                # Test if Printer is active, and if line is no Backend-Line
-                #if words[2] == "disabled" or words[0] == '\tBackend': continue
-                if words[0] == '\tBackend': continue
-                self.printers[words[1]] = []
+            if not ex.search(line): continue
+            self.printers[line.split(' ')[1]] = []
+        
 
     def getattr(self, path):
         st = MyStat()
@@ -71,12 +83,14 @@ class CupsFS(fuse.Fuse):
 
     def readdir(self, path, offset):
         dirents = [ '.', '..' ]
+        self.readprinters()
+        #print('PATH',path)
         if path == '/':
             dirents.extend(self.printers.keys())
         else:
             dirents.extend(self.printers[path[1:]])
         for r in dirents:
-            print('DIR',r)
+            #print('DIR',r)
             yield fuse.Direntry(r)
 
     def mknod(self, path, mode, dev):
