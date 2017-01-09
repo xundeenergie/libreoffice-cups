@@ -25,6 +25,6 @@ update:
 
 publish-git: $(FILESGIT)
 	sudo git add .
-	git commit -m $(COMMIT)
+	sudo git commit -m $(COMMIT)
 	git push origin master
 	
