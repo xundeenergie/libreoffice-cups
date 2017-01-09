@@ -1,7 +1,0 @@
-[Unit]
-Description=Present directory for each printer in %h/Drucker
-
-[Service]
-ExecStart=/etc/systemd/system/scripts/CupsFS.py -f %h/Drucker
-ExecStop=-/bin/fusermount -u %h/Drucker
-Restart=on-success
